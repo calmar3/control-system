@@ -10,6 +10,7 @@ public class Lamp {
     private double consumption;
     private String address;
     private long timestamp;
+    private double lightIntensity;
 
 
     public Lamp() {}
@@ -19,6 +20,14 @@ public class Lamp {
         this.consumption = consumption;
     }
 
+    public Lamp(long lampId,String address,double lightIntensity,long timestamp){
+    	  this.lampId = lampId;
+          this.lightIntensity = lightIntensity;
+          this.address = address;
+          this.timestamp = timestamp;
+    	
+    }
+    
     public Lamp(long lampId, double consumption,String address){
         this.lampId = lampId;
         this.consumption = consumption;
@@ -55,12 +64,29 @@ public class Lamp {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+    
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+	public double getLightIntensity() {
+		return this.lightIntensity;
+	}
+	
+	public void setLightIntensity(double lightIntensity) {
+		this.lightIntensity=lightIntensity;
+	}
 
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(this.lampId).append(",");
         sb.append(this.consumption).append(",");
+        sb.append(this.lightIntensity).append(",");
         sb.append(this.address);
         sb.append(" timestamp : ").append(this.timestamp);
 
@@ -90,12 +116,5 @@ public class Lamp {
         return ride;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
 }

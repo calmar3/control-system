@@ -1,9 +1,14 @@
 package utils.connector;
 
 import model.Lamp;
+import model.LightAdjustment;
+import model.LightSensor;
 
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer010;
 import utils.serialization.LampSchema;
+import utils.serialization.LightAdjustmentSchema;
+import utils.serialization.LightSensorSchema;
+
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 
@@ -17,6 +22,8 @@ public class KafkaConfigurator {
     private static final String LOCAL_ZOOKEEPER_HOST = "localhost:2181";
     private static final String LOCAL_KAFKA_BROKER = "localhost:9092";
     private static final String LAMP_TOPIC = "lampInfo";
+    private static final String SENSOR_TOPIC = "sensorInfo";
+
 
     public static final FlinkKafkaConsumer010<Lamp> getConsumer() {
 
@@ -42,17 +49,42 @@ public class KafkaConfigurator {
         return consumer;
     }
 
+    public static final FlinkKafkaConsumer010<LightSensor> getConsumerSensor() {
 
-    public static final void getProducer(DataStream<Lamp> lampStream) {
+        // configure the Kafka consumer
+        Properties kafkaProps = new Properties();
+        kafkaProps.setProperty("zookeeper.connect", LOCAL_ZOOKEEPER_HOST);
+        kafkaProps.setProperty("bootstrap.servers", LOCAL_KAFKA_BROKER);
+        kafkaProps.setProperty("group.id", "myGroup");
+
+        // always read the Kafka topic from the start
+        kafkaProps.setProperty("auto.offset.reset", "earliest");
+
+        // create a Kafka consumer
+        FlinkKafkaConsumer010<LightSensor> consumer = new FlinkKafkaConsumer010<>(
+                SENSOR_TOPIC,          //kafka topic
+                new LightSensorSchema(),   //deserialization schema
+                kafkaProps);        //consumer configuration
+
+
+        // assign a timestamp extractor to the consumer
+        //consumer.assignTimestampsAndWatermarks(new LampTSExtractor());
+
+        return consumer;
+    }
+
+
+     
+    public static final void getProducerAdjustmentIntensity(DataStream<LightAdjustment> lightAdjustmentStream) {
 
         //write data to a Kafka sink
-        lampStream.addSink(new FlinkKafkaProducer010<>(
+    	lightAdjustmentStream.addSink(new FlinkKafkaProducer010<>(
                 LOCAL_KAFKA_BROKER,
                 LAMP_TOPIC,
-                new LampSchema()
+                new LightAdjustmentSchema()
         ));
 
         //print only for testing
-        lampStream.print();
+        //lampStream.print();
     }
 }
