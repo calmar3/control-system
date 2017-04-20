@@ -22,10 +22,10 @@ import model.Lamp;
 import configuration.Configuration;
 import model.LightAdjustment;
 import model.LightSensor;
-import operator.filter.IntensityFilter;
+import operator.filter.LampFilter;
+import operator.filter.LightSensorFilter;
 import operator.join.ComputeIntensity;
 import operator.key.LampKey;
-import operator.key.LightAdjustmentKey;
 import operator.key.LightSensorKey;
 import operator.time.LampTSExtractor;
 import operator.time.LightSensorTSExtractor;
@@ -33,9 +33,6 @@ import operator.window.LampWindowFunction;
 import operator.window.LightSensorWindowFunction;
 import operator.window.SumIntensityFoldFunction;
 import operator.window.SumLampIntensityFoldFunction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -64,22 +61,22 @@ public class ControlApp {
 		List<LightSensor> data2 = new ArrayList<>();
 
 		for(long i=1; i<=5; i++){
-			data.add(new Lamp(1,i*10,"via palmiro togliatti",i*1100));
-			data.add(new Lamp(2,i*20,"via palmiro togliatti",i*1200));
-			data.add(new Lamp(3,i*30,"via tuscolana",i*1300));
-			data.add(new Lamp(4,i*40, "via tuscolana",i*1400));
+			data.add(new Lamp(1,i*0.1,"via palmiro togliatti",i*1100));
+			data.add(new Lamp(2,i*0.2,"via palmiro togliatti",i*1200));
+			data.add(new Lamp(3,i*0.3,"via tuscolana",i*1300));
+			data.add(new Lamp(4,i*0.4, "via tuscolana",i*1400));
 			
-			data2.add(new LightSensor(1,30, i*1100, "via palmiro togliatti"));
-			data2.add(new LightSensor(2,60, i*1200, "via palmiro togliatti"));
-			data2.add(new LightSensor(3,80, i*1300, "via tuscolana"));
-			data2.add(new LightSensor(4,100, i*1400, "via tuscolana"));
+			data2.add(new LightSensor(1,0.3, i*1100, "via palmiro togliatti"));
+			data2.add(new LightSensor(2,0.6, i*1200, "via palmiro togliatti"));
+			data2.add(new LightSensor(3,0.8, i*1300, "via tuscolana"));
+			data2.add(new LightSensor(4,0.1, i*1400, "via tuscolana"));
 
 			
 		}
 		DataStream<Lamp> lampStream = env.fromCollection(data).assignTimestampsAndWatermarks(new LampTSExtractor());
 		DataStream<LightSensor> sensorStream = env.fromCollection(data2).assignTimestampsAndWatermarks(new LightSensorTSExtractor());*/
 
-		ThreadCallTraffic tl = new ThreadCallTraffic();
+	    ThreadCallTraffic tl = new ThreadCallTraffic();
 		tl.start();
 		
 		// set up the streaming execution environment
@@ -95,13 +92,16 @@ public class ControlApp {
 
 		DataStream<Lamp> lampStream = env.addSource(kafkaConsumerTS);
 		DataStream<LightSensor> sensorStream = env.addSource(kafkaConsumerLS);
+
+		DataStream<Lamp> filteredLampById = lampStream.filter(new LampFilter());
+		DataStream<LightSensor> filteredSensorById = sensorStream.filter(new LightSensorFilter());
 	
         // compute avg light sensor
-		WindowedStream filteredSensorById = sensorStream.keyBy(new LightSensorKey()).timeWindow(Time.seconds(config.TIME_WINDOW_SENSOR_LIGHT_SEC));
-		DataStream<LightSensor> AvgSensorLight = filteredSensorById.fold(new Tuple2<>(null, (long) 0), new SumIntensityFoldFunction(), new LightSensorWindowFunction()).setParallelism(config.FOLD_PARALLELISM);
+		WindowedStream groupSensorById = filteredSensorById.keyBy(new LightSensorKey()).timeWindow(Time.seconds(config.TIME_WINDOW_SENSOR_LIGHT_SEC));
+		DataStream<LightSensor> AvgSensorLight = groupSensorById.fold(new Tuple2<>(null, (long) 0), new SumIntensityFoldFunction(), new LightSensorWindowFunction()).setParallelism(config.FOLD_PARALLELISM);
 		
-		WindowedStream filteredLampId = lampStream.keyBy(new LampKey()).timeWindow(Time.seconds(config.TIME_WINDOW_LAMP_SEC));
-		DataStream<Lamp> AvgLamp = filteredLampId.fold(new Tuple2<>(null, (long) 0), new SumLampIntensityFoldFunction(), new LampWindowFunction()).setParallelism(config.FOLD_PARALLELISM);
+		WindowedStream groupLampId = filteredLampById.keyBy(new LampKey()).timeWindow(Time.seconds(config.TIME_WINDOW_LAMP_SEC));
+		DataStream<Lamp> AvgLamp = groupLampId.fold(new Tuple2<>(null, (long) 0), new SumLampIntensityFoldFunction(), new LampWindowFunction()).setParallelism(config.FOLD_PARALLELISM);
 		
         // compute adjustment
 		DataStream<LightAdjustment> lightAdjustmentStream= AvgLamp.join(AvgSensorLight).where(new LampKey()).equalTo(new LightSensorKey()).window(TumblingEventTimeWindows.of(Time.seconds(config.JOIN_TIME_SEC)))
@@ -111,7 +111,6 @@ public class ControlApp {
 				
 		// publish result on Kafka topic
 		KafkaConfigurator.getProducerAdjustmentIntensity(lightAdjustmentStream);
-		
 		env.execute("Control System");
 	}
 }
