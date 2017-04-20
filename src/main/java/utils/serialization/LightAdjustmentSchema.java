@@ -1,9 +1,12 @@
 package utils.serialization;
 
 import java.io.IOException;
+
+import model.Lamp;
 import model.LightAdjustment;
 
 import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.streaming.util.serialization.SerializationSchema;
 
@@ -51,7 +54,8 @@ public class LightAdjustmentSchema implements DeserializationSchema<LightAdjustm
 	@Override
 	public TypeInformation<LightAdjustment> getProducedType() {
 		// TODO Auto-generated method stub
-		return null;
+        return TypeExtractor.getForClass(LightAdjustment.class);
+
 	}
 
 }

@@ -1,6 +1,5 @@
 package operator.filter;
 
-import model.Lamp;
 import model.LightSensor;
 
 import org.apache.flink.api.common.functions.FilterFunction;

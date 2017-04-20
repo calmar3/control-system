@@ -3,6 +3,7 @@ package utils.serialization;
 import java.io.IOException;
 
 import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.streaming.util.serialization.SerializationSchema;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,7 +41,6 @@ public class LightSensorSchema implements DeserializationSchema<LightSensor>, Se
 
         String jsonInString = new String(message);
         this.mapper = new ObjectMapper();
-        //Lamp lamp = new Lamp();
         try {
 
         	LightSensor lightSensor = this.mapper.readValue(jsonInString, LightSensor.class);
@@ -58,16 +58,13 @@ public class LightSensorSchema implements DeserializationSchema<LightSensor>, Se
 
     }
 
+    @Override
+    public boolean isEndOfStream(LightSensor nextElement) {
+        return false;
+    }
 
-	@Override
-	public boolean isEndOfStream(LightSensor nextElement) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public TypeInformation<LightSensor> getProducedType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public TypeInformation<LightSensor> getProducedType() {
+        return TypeExtractor.getForClass(LightSensor.class);
+    }
 }

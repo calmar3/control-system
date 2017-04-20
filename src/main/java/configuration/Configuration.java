@@ -39,7 +39,7 @@ public class Configuration {
 		    JOIN_TIME_SEC=Long.parseLong(prop.getProperty("JOIN_TIME_SEC"));
 		    WATERMARK_INTERVAL_SEC=Long.parseLong(prop.getProperty("WATERMARK_INTERVAL_SEC"));
 		    FOLD_PARALLELISM=Integer.parseInt(prop.getProperty("FOLD_PARALLELISM"));
-		    FILTER_PARALLELISM=Integer.parseInt(prop.getProperty("FOLD_PARALLELISM"));
+		    FILTER_PARALLELISM=Integer.parseInt(prop.getProperty("FILTER_PARALLELISM"));
 	       	MIN_PERCENTAGE_LIGHT_DOUBLE=Double.parseDouble(prop.getProperty("MIN_PERCENTAGE_LIGHT_DOUBLE"));
 	       	LOCAL_ZOOKEEPER_HOST=prop.getProperty("LOCAL_ZOOKEEPER_HOST");
 	       	LOCAL_KAFKA_BROKER=prop.getProperty("LOCAL_KAFKA_BROKER");
