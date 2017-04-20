@@ -8,19 +8,19 @@ public class LightSensor implements Serializable {
 	private long lightSensorId;
     private double lightIntensity;
     private long timestamp;
-    private String position;
+    private String address;
 
     public LightSensor() {}
 
-    public LightSensor(long lightSensorId, double lightIntensity, String position){
+    public LightSensor(long lightSensorId, double lightIntensity, String address){
         this.setLightSensorId(lightSensorId);
-        this.setPosition(position);
+        this.setAddress(address);
         this.setLightIntensity(lightIntensity);
     }
     
-    public LightSensor(long lightSensorId, double lightIntensity,long timestamp, String position){
+    public LightSensor(long lightSensorId, double lightIntensity,long timestamp, String address){
         this.setLightSensorId(lightSensorId);
-        this.setPosition(position);
+        this.setAddress(address);
         this.setTimestamp(timestamp);
         this.setLightIntensity(lightIntensity);
     }
@@ -49,12 +49,12 @@ public class LightSensor implements Serializable {
 		this.lightSensorId = lightSensorId;
 	}
 
-	public String getPosition() {
-		return position;
+	public String getAddress() {
+		return address;
 	}
 
-	public void setPosition(String position) {
-		this.position = position;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 	
 	 public String toString() {
@@ -62,7 +62,7 @@ public class LightSensor implements Serializable {
         sb.append("-----");
         sb.append(this.lightSensorId).append(", ");
         sb.append(this.lightIntensity).append(", ");
-        sb.append(this.position);
+        sb.append(this.address);
         sb.append("-----");
         
         return sb.toString();

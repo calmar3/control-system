@@ -17,6 +17,6 @@ public class LightSensorWindowFunction implements WindowFunction<Tuple2<LightSen
 
         Tuple2<LightSensor, Long> totIntensity = input.iterator().next();
 
-        out.collect(new LightSensor(key, ((LightSensor)totIntensity.f0).getLightIntensity()/ totIntensity.f1, ((LightSensor)totIntensity.f0).getTimestamp(), ((LightSensor)totIntensity.f0).getPosition()));
+        out.collect(new LightSensor(key, ((LightSensor)totIntensity.f0).getLightIntensity()/ totIntensity.f1, ((LightSensor)totIntensity.f0).getTimestamp(), ((LightSensor)totIntensity.f0).getAddress()));
     }
 }

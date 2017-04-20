@@ -13,16 +13,16 @@ public class SumIntensityFoldFunction implements FoldFunction<LightSensor, Tuple
 	@Override
     public Tuple2<LightSensor, Long> fold(Tuple2<LightSensor, Long> in, LightSensor l) throws Exception {
         if(in.f0 != null) {
-        	Double traffic= HashMapStreetTraffic.getInstance().get((in.f0).getPosition());
+        	Double traffic= HashMapStreetTraffic.getInstance().get((in.f0).getAddress());
     		if(traffic==null){
-    			HashMapStreetTraffic.getInstance().put((in.f0).getPosition(),0.1);
+    			HashMapStreetTraffic.getInstance().put((in.f0).getAddress(),0.1);
     		}
-            return new Tuple2<LightSensor, Long>(new LightSensor(l.getLightSensorId(), (in.f0).getLightIntensity() + l.getLightIntensity(),l.getTimestamp(),l.getPosition()), in.f1 + 1);
+            return new Tuple2<LightSensor, Long>(new LightSensor(l.getLightSensorId(), (in.f0).getLightIntensity() + l.getLightIntensity(),l.getTimestamp(),l.getAddress()), in.f1 + 1);
         }  
         else {
-        	Double traffic= HashMapStreetTraffic.getInstance().get(l.getPosition());
+        	Double traffic= HashMapStreetTraffic.getInstance().get(l.getAddress());
     		if(traffic==null){
-    			HashMapStreetTraffic.getInstance().put(l.getPosition(),0.1);
+    			HashMapStreetTraffic.getInstance().put(l.getAddress(),0.1);
     		}
             return new Tuple2<>(l, (long)1);
         }
