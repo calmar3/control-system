@@ -1,6 +1,7 @@
 package operator.join;
 import org.apache.flink.api.common.functions.JoinFunction;
 
+import configuration.Configuration;
 import model.HashMapStreetTraffic;
 import model.Lamp;
 import model.LightAdjustment;
@@ -12,33 +13,26 @@ public class ComputeIntensity implements JoinFunction<Lamp, LightSensor, LightAd
 
 	@Override
 	public LightAdjustment join(Lamp lamp, LightSensor lightSensor) throws Exception {
-		double intensityLight=lamp.getLightIntensity()+lightSensor.getLightIntensity();
+		Configuration config= new Configuration();
+				
 		LightAdjustment la = new LightAdjustment();
-		la.setLightIntensityAdjustment(0);
-		la.setLampId(lamp.getId());
+		la.setLightIntensityAdjustment(lamp.getLightIntensity());
+		la.setLampId(lamp.getLampId());
+		
 		double trafficPercentual= HashMapStreetTraffic.getInstance().get(lamp.getAddress()); 
-		if(intensityLight>1){
-			if(lightSensor.getLightIntensity()>=0.5){
-				la.setLightIntensityAdjustment(lamp.getLightIntensity()*(-1));
-			}
-			la.setLightIntensityAdjustment((intensityLight-1)*(-1));
+		
+		if(lightSensor.getLightIntensity()>=0.5){
+			la.setLightIntensityAdjustment((lamp.getLightIntensity())*(-1));
+			return la;
 		}
-		if(intensityLight==1){
-			if(lightSensor.getLightIntensity()>=0.5){
-				la.setLightIntensityAdjustment(lamp.getLightIntensity()*(-1));
-			}
+		else if(trafficPercentual<config.MIN_PERCENTAGE_LIGHT_DOUBLE){
+			la.setLightIntensityAdjustment((Math.abs(config.MIN_PERCENTAGE_LIGHT_DOUBLE-lightSensor.getLightIntensity()))-lamp.getLightIntensity());
+			return la;
 		}
-		if(intensityLight<1){
-			if(lightSensor.getLightIntensity()>=0.5){
-				la.setLightIntensityAdjustment(lamp.getLightIntensity()*(-1));
-			}else{
-				if(trafficPercentual>0.5){
-					la.setLightIntensityAdjustment(1-lamp.getLightIntensity()-lamp.getLightIntensity());
-				}
-								
-			}	
+		else if(lamp.getLightIntensity()!=trafficPercentual-lightSensor.getLightIntensity()){
+			la.setLightIntensityAdjustment(Math.abs(trafficPercentual-lightSensor.getLightIntensity())-lamp.getLightIntensity());
+			return la;
 		}
 		return la;
 	}
-
 }

@@ -1,51 +1,69 @@
 package model;
 
-/**
- * Created by maurizio on 21/03/17.
- */
-public class Lamp {
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.JSONObject;
 
+import java.io.Serializable;
+import java.util.List;
+
+/**
+ * Created by olga.
+ */
+public class Lamp implements Cloneable{
 
     private long lampId;
     private double consumption;
     private String address;
+    private String city;
+    private String longitude;
+    private String latitude;
     private long timestamp;
+    private long lastSubstitutionDate;
+    private long residualLifeTime;
+    private boolean stateOn;
     private double lightIntensity;
 
-
     public Lamp() {}
-
-    public Lamp(long lampId, double consumption){
-        this.lampId = lampId;
-        this.consumption = consumption;
-    }
-
-    public Lamp(long lampId,String address,double lightIntensity,long timestamp){
-    	  this.lampId = lampId;
-          this.lightIntensity = lightIntensity;
-          this.address = address;
-          this.timestamp = timestamp;
-    	
-    }
     
-    public Lamp(long lampId, double consumption,String address){
+    public Lamp(long lampId, double lightIntensity, String address, long timestamp){
         this.lampId = lampId;
-        this.consumption = consumption;
+        this.lightIntensity = lightIntensity;
         this.address = address;
+        this.timestamp = timestamp;
+        this.residualLifeTime = timestamp - lastSubstitutionDate;
     }
 
-    public Lamp(long lampId, double consumption,String address, long timestamp){
+    public Lamp(long lampId, double consumption, String city, String address, long timestamp) {
         this.lampId = lampId;
         this.consumption = consumption;
+        this.city = city;
         this.address = address;
         this.timestamp = timestamp;
     }
 
-    public long getId() {
+    public Lamp(String city, double consumption, long timestamp) {
+        this.city = city;
+        this.consumption = consumption;
+        this.timestamp = timestamp;
+    }
+
+    public Lamp(long lampId, double consumption, String city, String address, long lastSubstitutionDate, long timestamp){
+        this.lampId = lampId;
+        this.consumption = consumption;
+        this.city = city;
+        this.address = address;
+        this.timestamp = timestamp;
+        this.lastSubstitutionDate = lastSubstitutionDate;
+        this.residualLifeTime = timestamp - lastSubstitutionDate;
+    }
+
+    public long getLampId() {
         return lampId;
     }
 
-    public void setId(long lampId) {
+    public void setLampId(long lampId) {
         this.lampId = lampId;
     }
 
@@ -57,14 +75,14 @@ public class Lamp {
         this.consumption = consumption;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public String getCity() {
+        return city;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setCity(String city) {
+        this.city = city;
     }
-    
+
     public String getAddress() {
         return address;
     }
@@ -73,29 +91,53 @@ public class Lamp {
         this.address = address;
     }
 
-	public double getLightIntensity() {
-		return this.lightIntensity;
-	}
-	
-	public void setLightIntensity(double lightIntensity) {
-		this.lightIntensity=lightIntensity;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
+    public long getLastSubstitutionDate() {
+        return lastSubstitutionDate;
+    }
+
+    public void setLastSubstitutionDate(long lastSubstitutionDate) {
+        this.lastSubstitutionDate = lastSubstitutionDate;
+    }
+
+    public long getResidualLifeTime() {
+        return residualLifeTime;
+    }
+
+    public void setResidualLifeTime(long residualLifeTime) {
+        this.residualLifeTime = residualLifeTime;
+    }
+
+    public boolean isStateOn() {
+        return stateOn;
+    }
+
+    public void setStateOn(boolean stateOn) {
+        this.stateOn = stateOn;
+    }
+
+    @Override
+    public Lamp clone() throws CloneNotSupportedException {
+        return (Lamp) super.clone();
+    }
+    
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(this.lampId).append(",");
-        sb.append(this.consumption).append(",");
-        sb.append(this.lightIntensity).append(",");
-        sb.append(this.address);
-        sb.append(" timestamp : ").append(this.timestamp);
+        sb.append(this.lampId).append(", ");
+        sb.append("intensity : ").append(this.lightIntensity).append(", ");
+        sb.append(this.address).append(", ");
+        sb.append("timestamp : ").append(this.timestamp);
 
         return sb.toString();
     }
-
-
-
-
+    
     public static Lamp fromString(String line) {
 
         String[] tokens = line.split(",");
@@ -107,7 +149,7 @@ public class Lamp {
 
         try {
             ride.lampId = Long.parseLong(tokens[0]);
-            ride.consumption = Double.parseDouble(tokens[1]);
+            ride.consumption = Long.parseLong(tokens[1]);
 
         } catch (NumberFormatException nfe) {
             throw new RuntimeException("Invalid record: " + line, nfe);
@@ -115,6 +157,43 @@ public class Lamp {
 
         return ride;
     }
+    
+    public static String toJson(Lamp l) {
 
+        ObjectMapper mapper = new ObjectMapper();
 
+        String jsonInString = new String("");
+        try {
+            jsonInString = mapper.writeValueAsString(l);
+            return jsonInString;
+
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+
+    }
+/*
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Lamp origin = new Lamp(1, 10 ,"a", System.currentTimeMillis(), System.currentTimeMillis() + 1000 );
+        Lamp clone = origin.clone();
+        clone.setConsumption(100000);
+        clone.setAddress("Change");
+        System.out.println(Lamp.toJson(origin));
+        System.out.println(Lamp.toJson(clone));
+    }
+*/
+
+	/**
+	 * @return the lightIntensity
+	 */
+	public double getLightIntensity() {
+		return lightIntensity;
+	}
+
+	/**
+	 * @param lightIntensity the lightIntensity to set
+	 */
+	public void setLightIntensity(double lightIntensity) {
+		this.lightIntensity = lightIntensity;
+	}
 }

@@ -18,21 +18,24 @@ package core;
  * limitations under the License.
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import model.HashMapStreetTraffic;
 import model.Lamp;
+import configuration.Configuration;
 import model.LightAdjustment;
 import model.LightSensor;
+import operator.filter.IntensityFilter;
 import operator.join.ComputeIntensity;
 import operator.key.LampKey;
+import operator.key.LightAdjustmentKey;
 import operator.key.LightSensorKey;
 import operator.time.LampTSExtractor;
 import operator.time.LightSensorTSExtractor;
-import operator.window.AvgIntensityLight;
+import operator.window.LampWindowFunction;
 import operator.window.LightSensorWindowFunction;
 import operator.window.SumIntensityFoldFunction;
+import operator.window.SumLampIntensityFoldFunction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -40,7 +43,6 @@ import org.apache.flink.streaming.api.datastream.WindowedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
-import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumerBase;
 
@@ -48,46 +50,66 @@ import utils.connector.KafkaConfigurator;
 import utils.traffic.ThreadCallTraffic;
 import control.EnvConfigurator;
 
-
-/*valerio*/
+/*olga*/
 
 public class ControlApp {
-	
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	
 	public static void main(String[] args) throws Exception {
+		Configuration config = new Configuration();
+		final StreamExecutionEnvironment env = EnvConfigurator.setupExecutionEnvironment();
+		
+		/*List<Lamp> data = new ArrayList<>();
+		List<LightSensor> data2 = new ArrayList<>();
+
+		for(long i=1; i<=5; i++){
+			data.add(new Lamp(1,i*10,"via palmiro togliatti",i*1100));
+			data.add(new Lamp(2,i*20,"via palmiro togliatti",i*1200));
+			data.add(new Lamp(3,i*30,"via tuscolana",i*1300));
+			data.add(new Lamp(4,i*40, "via tuscolana",i*1400));
+			
+			data2.add(new LightSensor(1,30, i*1100, "via palmiro togliatti"));
+			data2.add(new LightSensor(2,60, i*1200, "via palmiro togliatti"));
+			data2.add(new LightSensor(3,80, i*1300, "via tuscolana"));
+			data2.add(new LightSensor(4,100, i*1400, "via tuscolana"));
+
+			
+		}
+		DataStream<Lamp> lampStream = env.fromCollection(data).assignTimestampsAndWatermarks(new LampTSExtractor());
+		DataStream<LightSensor> sensorStream = env.fromCollection(data2).assignTimestampsAndWatermarks(new LightSensorTSExtractor());*/
 
 		ThreadCallTraffic tl = new ThreadCallTraffic();
 		tl.start();
-
+		
 		// set up the streaming execution environment
-		final StreamExecutionEnvironment env = EnvConfigurator.setupExecutionEnvironment();
 		
 		FlinkKafkaConsumer010<Lamp> kafkaConsumer = KafkaConfigurator.getConsumer();
+		FlinkKafkaConsumer010<LightSensor> kafkaConsumerSensor = KafkaConfigurator.getConsumerSensor();
 
 		// assign a timestamp extractor to the consumer
 		FlinkKafkaConsumerBase<Lamp> kafkaConsumerTS = kafkaConsumer.assignTimestampsAndWatermarks(new LampTSExtractor());
 		
-		FlinkKafkaConsumer010<LightSensor> kafkaConsumerSensor = KafkaConfigurator.getConsumerSensor();
-
 		// assign a timestamp extractor to the consumer
 		FlinkKafkaConsumerBase<LightSensor> kafkaConsumerLS = kafkaConsumerSensor.assignTimestampsAndWatermarks(new LightSensorTSExtractor());
 
-
 		DataStream<Lamp> lampStream = env.addSource(kafkaConsumerTS);
 		DataStream<LightSensor> sensorStream = env.addSource(kafkaConsumerLS);
-
-		// compute partial rank 
+	
+        // compute avg light sensor
+		WindowedStream filteredSensorById = sensorStream.keyBy(new LightSensorKey()).timeWindow(Time.seconds(config.TIME_WINDOW_SENSOR_LIGHT_SEC));
+		DataStream<LightSensor> AvgSensorLight = filteredSensorById.fold(new Tuple2<>(null, (long) 0), new SumIntensityFoldFunction(), new LightSensorWindowFunction()).setParallelism(config.FOLD_PARALLELISM);
 		
-		WindowedStream filteredSensorById = sensorStream.keyBy(new LightSensorKey()).timeWindow(Time.seconds(10));
-
-		DataStream<LightSensor> AvgSensorLight = filteredSensorById.fold(new Tuple2<>(null, (long) 0), new SumIntensityFoldFunction(), new LightSensorWindowFunction());
+		WindowedStream filteredLampId = lampStream.keyBy(new LampKey()).timeWindow(Time.seconds(config.TIME_WINDOW_LAMP_SEC));
+		DataStream<Lamp> AvgLamp = filteredLampId.fold(new Tuple2<>(null, (long) 0), new SumLampIntensityFoldFunction(), new LampWindowFunction()).setParallelism(config.FOLD_PARALLELISM);
 		
-		DataStream<LightAdjustment> lightAdjustmentStream= lampStream.join(AvgSensorLight)
-	    .where(new LampKey()).equalTo(new LightSensorKey()).window(TumblingEventTimeWindows.of(Time.seconds(11)))
-	    .apply(new ComputeIntensity());
+        // compute adjustment
+		DataStream<LightAdjustment> lightAdjustmentStream= AvgLamp.join(AvgSensorLight).where(new LampKey()).equalTo(new LightSensorKey()).window(TumblingEventTimeWindows.of(Time.seconds(config.JOIN_TIME_SEC)))
+				.apply(new ComputeIntensity());
+		
+		//DataStream<LightAdjustment> filterAdjustmentStream = lightAdjustmentStream.keyBy(new LightAdjustmentKey()).filter(new IntensityFilter()).setParallelism(config.FILTER_PARALLELISM);
 				
 		// publish result on Kafka topic
-		
 		KafkaConfigurator.getProducerAdjustmentIntensity(lightAdjustmentStream);
 		
 		env.execute("Control System");

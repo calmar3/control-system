@@ -10,14 +10,11 @@ import org.apache.flink.streaming.util.serialization.SerializationSchema;
 
 import java.io.IOException;
 
-/**
- * Created by maurizio on 21/03/17.
- * 
- * Implements a SerializationSchema and DeserializationSchema for Lamp for Kafka data sources and sinks.
- */
+
 public class LampSchema implements DeserializationSchema<Lamp>, SerializationSchema<Lamp> {
 
-    public ObjectMapper mapper;
+	private static final long serialVersionUID = 1L;
+	public ObjectMapper mapper;
 
     @Override
     public byte[] serialize(Lamp element) {
@@ -43,7 +40,6 @@ public class LampSchema implements DeserializationSchema<Lamp>, SerializationSch
 
         String jsonInString = new String(message);
         this.mapper = new ObjectMapper();
-        //Lamp lamp = new Lamp();
         try {
 
             Lamp lamp = this.mapper.readValue(jsonInString, Lamp.class);

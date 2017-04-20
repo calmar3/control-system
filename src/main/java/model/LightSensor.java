@@ -7,7 +7,7 @@ public class LightSensor implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private long lightSensorId;
     private double lightIntensity;
-    private long timeStamp;
+    private long timestamp;
     private String position;
 
     public LightSensor() {}
@@ -18,12 +18,20 @@ public class LightSensor implements Serializable {
         this.setLightIntensity(lightIntensity);
     }
     
-    public LightSensor(long lightSensorId, double lightIntensity,long timeStamp, String position){
+    public LightSensor(long lightSensorId, double lightIntensity,long timestamp, String position){
         this.setLightSensorId(lightSensorId);
         this.setPosition(position);
-        this.setTimeStamp(timeStamp);
+        this.setTimestamp(timestamp);
         this.setLightIntensity(lightIntensity);
     }
+    
+    public long getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(long timestamp) {
+		this.timestamp = timestamp;
+	}
 
 	public double getLightIntensity() {
 		return lightIntensity;
@@ -59,19 +67,5 @@ public class LightSensor implements Serializable {
         
         return sb.toString();
     }
-
-	/**
-	 * @return the timeStamp
-	 */
-	public long getTimeStamp() {
-		return timeStamp;
-	}
-
-	/**
-	 * @param timeStamp the timeStamp to set
-	 */
-	public void setTimeStamp(long timeStamp) {
-		this.timeStamp = timeStamp;
-	}
 
 }

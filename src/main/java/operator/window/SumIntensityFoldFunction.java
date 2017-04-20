@@ -6,7 +6,6 @@ import org.apache.flink.api.common.functions.FoldFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 
 
-
 public class SumIntensityFoldFunction implements FoldFunction<LightSensor, Tuple2<LightSensor, Long>> {
 
 	private static final long serialVersionUID = 1L;
@@ -18,7 +17,7 @@ public class SumIntensityFoldFunction implements FoldFunction<LightSensor, Tuple
     		if(traffic==null){
     			HashMapStreetTraffic.getInstance().put((in.f0).getPosition(),0.1);
     		}
-            return new Tuple2<LightSensor, Long>(new LightSensor(l.getLightSensorId(), (in.f0).getLightIntensity() + l.getLightIntensity(),l.getTimeStamp(),l.getPosition()), in.f1 + 1);
+            return new Tuple2<LightSensor, Long>(new LightSensor(l.getLightSensorId(), (in.f0).getLightIntensity() + l.getLightIntensity(),l.getTimestamp(),l.getPosition()), in.f1 + 1);
         }  
         else {
         	Double traffic= HashMapStreetTraffic.getInstance().get(l.getPosition());

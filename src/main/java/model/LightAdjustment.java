@@ -10,7 +10,7 @@ public class LightAdjustment implements Serializable {
 
     public LightAdjustment() {}
 
-    public LightAdjustment(long lampId, long lightIntensityAdjustment){
+    public LightAdjustment(long lampId, double lightIntensityAdjustment){
         this.setLampId(lampId);
         this.setLightIntensityAdjustment(lightIntensityAdjustment);
     }

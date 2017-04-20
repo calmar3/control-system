@@ -1,23 +1,20 @@
 package utils.serialization;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import model.LightSensor;
-import org.apache.flink.api.common.typeinfo.TypeInformation;
-import org.apache.flink.api.java.typeutils.TypeExtractor;
-import org.apache.flink.streaming.util.serialization.DeserializationSchema;
-import org.apache.flink.streaming.util.serialization.SerializationSchema;
-
 import java.io.IOException;
 
-/**
- * Created by maurizio on 21/03/17.
- * 
- * Implements a SerializationSchema and DeserializationSchema for Lamp for Kafka data sources and sinks.
- */
+import org.apache.flink.api.common.typeinfo.TypeInformation;
+import org.apache.flink.streaming.util.serialization.DeserializationSchema;
+import org.apache.flink.streaming.util.serialization.SerializationSchema;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import model.LightSensor;
+
+
 public class LightSensorSchema implements DeserializationSchema<LightSensor>, SerializationSchema<LightSensor> {
 
-    public ObjectMapper mapper;
+	private static final long serialVersionUID = 1L;
+	public ObjectMapper mapper;
 
     @Override
     public byte[] serialize(LightSensor element) {

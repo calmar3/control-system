@@ -1,9 +1,6 @@
 package utils.serialization;
 
 import java.io.IOException;
-import java.util.TreeSet;
-
-import model.Lamp;
 import model.LightAdjustment;
 
 import org.apache.flink.api.common.typeinfo.TypeInformation;

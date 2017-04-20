@@ -5,6 +5,8 @@ import model.LightAdjustment;
 import model.LightSensor;
 
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer010;
+
+import configuration.Configuration;
 import utils.serialization.LampSchema;
 import utils.serialization.LightAdjustmentSchema;
 import utils.serialization.LightSensorSchema;
@@ -12,25 +14,23 @@ import utils.serialization.LightSensorSchema;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.Properties;
 
 /**
- * Created by maurizio on 28/03/17.
+ * Created by olga.
  */
 public class KafkaConfigurator {
 
-    private static final String LOCAL_ZOOKEEPER_HOST = "localhost:2181";
-    private static final String LOCAL_KAFKA_BROKER = "localhost:9092";
-    private static final String LAMP_TOPIC = "lampInfo";
-    private static final String SENSOR_TOPIC = "sensorInfo";
+	
 
-
-    public static final FlinkKafkaConsumer010<Lamp> getConsumer() {
-
+    public static final FlinkKafkaConsumer010<Lamp> getConsumer() throws IOException, ParseException {
+    	Configuration config = new Configuration();
         // configure the Kafka consumer
         Properties kafkaProps = new Properties();
-        kafkaProps.setProperty("zookeeper.connect", LOCAL_ZOOKEEPER_HOST);
-        kafkaProps.setProperty("bootstrap.servers", LOCAL_KAFKA_BROKER);
+        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST);
+        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER);
         kafkaProps.setProperty("group.id", "myGroup");
 
         // always read the Kafka topic from the start
@@ -38,7 +38,7 @@ public class KafkaConfigurator {
 
         // create a Kafka consumer
         FlinkKafkaConsumer010<Lamp> consumer = new FlinkKafkaConsumer010<>(
-                LAMP_TOPIC,          //kafka topic
+                config.LAMP_TOPIC,          //kafka topic
                 new LampSchema(),   //deserialization schema
                 kafkaProps);        //consumer configuration
 
@@ -49,12 +49,13 @@ public class KafkaConfigurator {
         return consumer;
     }
 
-    public static final FlinkKafkaConsumer010<LightSensor> getConsumerSensor() {
-
+    public static final FlinkKafkaConsumer010<LightSensor> getConsumerSensor() throws IOException, ParseException {
+    	Configuration config = new Configuration();
+    	
         // configure the Kafka consumer
         Properties kafkaProps = new Properties();
-        kafkaProps.setProperty("zookeeper.connect", LOCAL_ZOOKEEPER_HOST);
-        kafkaProps.setProperty("bootstrap.servers", LOCAL_KAFKA_BROKER);
+        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST);
+        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER);
         kafkaProps.setProperty("group.id", "myGroup");
 
         // always read the Kafka topic from the start
@@ -62,7 +63,7 @@ public class KafkaConfigurator {
 
         // create a Kafka consumer
         FlinkKafkaConsumer010<LightSensor> consumer = new FlinkKafkaConsumer010<>(
-                SENSOR_TOPIC,          //kafka topic
+                config.SENSOR_TOPIC,          //kafka topic
                 new LightSensorSchema(),   //deserialization schema
                 kafkaProps);        //consumer configuration
 
@@ -75,12 +76,13 @@ public class KafkaConfigurator {
 
 
      
-    public static final void getProducerAdjustmentIntensity(DataStream<LightAdjustment> lightAdjustmentStream) {
-
+    public static final void getProducerAdjustmentIntensity(DataStream<LightAdjustment> lightAdjustmentStream) throws IOException, ParseException {
+    	Configuration config = new Configuration();
+    	
         //write data to a Kafka sink
     	lightAdjustmentStream.addSink(new FlinkKafkaProducer010<>(
-                LOCAL_KAFKA_BROKER,
-                LAMP_TOPIC,
+                config.LOCAL_KAFKA_BROKER,
+                config.CONTROL_TOPIC,
                 new LightAdjustmentSchema()
         ));
 
