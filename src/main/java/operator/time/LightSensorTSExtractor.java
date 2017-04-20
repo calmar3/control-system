@@ -9,8 +9,7 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 public class LightSensorTSExtractor extends BoundedOutOfOrdernessTimestampExtractor<LightSensor> {
 
 	private static final long serialVersionUID = 1L;
-	
-	private static final long MAX_EVENT_DELAY = 1 ;
+	private static final long MAX_EVENT_DELAY = 1;
 
     public LightSensorTSExtractor() {
         super(Time.seconds(MAX_EVENT_DELAY));
@@ -18,6 +17,10 @@ public class LightSensorTSExtractor extends BoundedOutOfOrdernessTimestampExtrac
 
     @Override
     public long extractTimestamp(LightSensor lightSensor) {
+        //System.out.println(lamp.getTimestamp());
+        if(lightSensor != null)
             return lightSensor.getTimestamp();
+        else
+            return 0;
     }
 }
