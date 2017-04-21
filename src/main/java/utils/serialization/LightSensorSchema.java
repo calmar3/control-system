@@ -40,7 +40,6 @@ public class LightSensorSchema implements DeserializationSchema<LightSensor>, Se
     public LightSensor deserialize(byte[] message) {
 
         String jsonInString = new String(message);
-        //System.out.println("\n\n\n\n\n\n\n\n" + jsonInString + "\n\n\n\n\n\n\n\n");
         this.mapper = new ObjectMapper();
 
         try {
@@ -50,13 +49,7 @@ public class LightSensorSchema implements DeserializationSchema<LightSensor>, Se
 
         }  catch (IOException e) {
 
-            /**
-             * .readValue catch exception over any kind of data (double, int, objects ecc ecc)
-             * return null value to discard invalid tuple
-             */
-            System.out.println("\n\n\n\n\n\n\n\n");
             e.printStackTrace();
-            System.out.println("\n\n\n\n\n\n\n\n");
             return null;
 
         }

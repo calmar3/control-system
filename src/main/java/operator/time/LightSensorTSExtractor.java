@@ -17,7 +17,6 @@ public class LightSensorTSExtractor extends BoundedOutOfOrdernessTimestampExtrac
 
     @Override
     public long extractTimestamp(LightSensor lightSensor) {
-        //System.out.println(lamp.getTimestamp());
         if(lightSensor != null)
             return lightSensor.getTimestamp();
         else

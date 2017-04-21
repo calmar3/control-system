@@ -31,20 +31,12 @@ public class KafkaConfigurator {
         Properties kafkaProps = new Properties();
         kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST);
         kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER);
-        kafkaProps.setProperty("group.id", "myGroup");
-
-        // always read the Kafka topic from the start
-        kafkaProps.setProperty("auto.offset.reset", "earliest");
-
+ 
         // create a Kafka consumer
         FlinkKafkaConsumer010<Lamp> consumer = new FlinkKafkaConsumer010<>(
                 config.LAMP_TOPIC,          //kafka topic
                 new LampSchema(),   //deserialization schema
                 kafkaProps);        //consumer configuration
-
-
-        // assign a timestamp extractor to the consumer
-        //consumer.assignTimestampsAndWatermarks(new LampTSExtractor());
 
         return consumer;
     }
@@ -56,20 +48,12 @@ public class KafkaConfigurator {
         Properties kafkaProps = new Properties();
         kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST);
         kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER);
-        kafkaProps.setProperty("group.id", "myGroup");
-
-        // always read the Kafka topic from the start
-        kafkaProps.setProperty("auto.offset.reset", "earliest");
 
         // create a Kafka consumer
         FlinkKafkaConsumer010<LightSensor> consumer = new FlinkKafkaConsumer010<>(
                 config.SENSOR_TOPIC,          //kafka topic
                 new LightSensorSchema(),   //deserialization schema
                 kafkaProps);        //consumer configuration
-
-
-        // assign a timestamp extractor to the consumer
-        //consumer.assignTimestampsAndWatermarks(new LampTSExtractor());
 
         return consumer;
     }
@@ -85,8 +69,5 @@ public class KafkaConfigurator {
                 config.CONTROL_TOPIC,
                 new LightAdjustmentSchema()
         ));
-
-        //print only for testing
-        //lampStream.print();
     }
 }

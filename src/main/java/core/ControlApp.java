@@ -22,10 +22,12 @@ import model.Lamp;
 import configuration.Configuration;
 import model.LightAdjustment;
 import model.LightSensor;
+import operator.filter.AdjustmentFilter;
 import operator.filter.LampFilter;
 import operator.filter.LightSensorFilter;
 import operator.join.ComputeIntensity;
 import operator.key.LampKey;
+import operator.key.LightAdjustmentKey;
 import operator.key.LightSensorKey;
 import operator.time.LampTSExtractor;
 import operator.time.LightSensorTSExtractor;
@@ -33,6 +35,9 @@ import operator.window.LampWindowFunction;
 import operator.window.LightSensorWindowFunction;
 import operator.window.SumIntensityFoldFunction;
 import operator.window.SumLampIntensityFoldFunction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -62,9 +67,9 @@ public class ControlApp {
 
 		for(long i=1; i<=5; i++){
 			data.add(new Lamp(1,i*0.1,"via palmiro togliatti",i*1100));
-			data.add(new Lamp(2,i*0.2,"via palmiro togliatti",i*1200));
-			data.add(new Lamp(3,i*0.3,"via tuscolana",i*1300));
-			data.add(new Lamp(4,i*0.4, "via tuscolana",i*1400));
+			data.add(new Lamp(2,i*0.1,"via palmiro togliatti",i*1200));
+			data.add(new Lamp(3,i*0.1,"via tuscolana",i*1300));
+			data.add(new Lamp(4,i*0.1, "via tuscolana",i*1400));
 			
 			data2.add(new LightSensor(1,0.3, i*1100, "via palmiro togliatti"));
 			data2.add(new LightSensor(2,0.6, i*1200, "via palmiro togliatti"));
@@ -107,10 +112,11 @@ public class ControlApp {
 		DataStream<LightAdjustment> lightAdjustmentStream= AvgLamp.join(AvgSensorLight).where(new LampKey()).equalTo(new LightSensorKey()).window(TumblingEventTimeWindows.of(Time.seconds(config.JOIN_TIME_SEC)))
 				.apply(new ComputeIntensity());
 		
-		//DataStream<LightAdjustment> filterAdjustmentStream = lightAdjustmentStream.keyBy(new LightAdjustmentKey()).filter(new IntensityFilter()).setParallelism(config.FILTER_PARALLELISM);
+		DataStream<LightAdjustment> filterAdjustmentStream = lightAdjustmentStream.keyBy(new LightAdjustmentKey()).filter(new AdjustmentFilter()).setParallelism(config.FILTER_PARALLELISM);
 				
 		// publish result on Kafka topic
-		KafkaConfigurator.getProducerAdjustmentIntensity(lightAdjustmentStream);
+		
+		KafkaConfigurator.getProducerAdjustmentIntensity(filterAdjustmentStream);
 		env.execute("Control System");
 	}
 }

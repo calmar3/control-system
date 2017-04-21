@@ -11,6 +11,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
+import configuration.Configuration;
 import model.HashMapStreetTraffic;
 
 public class ThreadCallTraffic extends Thread {
@@ -29,13 +30,13 @@ public class ThreadCallTraffic extends Thread {
 	
 	@Override
 	public void run() {
-				
+		Configuration config = new Configuration();
 		while(!stop) {
 			
 			for(Map.Entry<String, Double> tr:  HashMapStreetTraffic.getInstance().entrySet()){
 			
 				try {
-					String url= "http://10.220.167.251:6007/street/"+URLEncoder.encode(tr.getKey());
+					String url= "http://"+config.TRAFFIC_HOST+URLEncoder.encode(tr.getKey());
 					HttpResponse<String> response = Unirest.get(url)
 							  .header("content-type", "application/json")
 							  .asString();

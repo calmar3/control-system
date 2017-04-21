@@ -24,6 +24,8 @@ public class Configuration {
 	public String CONTROL_TOPIC;
 	public String SENSOR_TOPIC;
 	
+	public String TRAFFIC_HOST;
+	
     public static final String FILENAME = "configuration/config.properties";
 
 	
@@ -46,6 +48,7 @@ public class Configuration {
 			LAMP_TOPIC=prop.getProperty("LAMP_TOPIC");
 	       	SENSOR_TOPIC=prop.getProperty("SENSOR_TOPIC");
 			CONTROL_TOPIC=prop.getProperty("CONTROL_TOPIC");
+			TRAFFIC_HOST=prop.getProperty("TRAFFIC_HOST");
 	    
 		} 
         catch (Exception e) {
