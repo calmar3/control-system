@@ -14,6 +14,7 @@ public class Lamp implements Cloneable{
     private String city;
     private String longitude;
     private String latitude;
+    private String model;
     private long timestamp;
     private long lastSubstitutionDate;
     private long residualLifeTime;
@@ -117,6 +118,38 @@ public class Lamp implements Cloneable{
     public void setStateOn(boolean stateOn) {
         this.stateOn = stateOn;
     }
+    
+	public double getLightIntensity() {
+		return lightIntensity;
+	}
+
+	public void setLightIntensity(double lightIntensity) {
+		this.lightIntensity = lightIntensity;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
 
     @Override
     public Lamp clone() throws CloneNotSupportedException {
@@ -178,45 +211,4 @@ public class Lamp implements Cloneable{
     }
 */
 
-	/**
-	 * @return the lightIntensity
-	 */
-	public double getLightIntensity() {
-		return lightIntensity;
-	}
-
-	/**
-	 * @param lightIntensity the lightIntensity to set
-	 */
-	public void setLightIntensity(double lightIntensity) {
-		this.lightIntensity = lightIntensity;
-	}
-
-	/**
-	 * @return the longitude
-	 */
-	public String getLongitude() {
-		return longitude;
-	}
-
-	/**
-	 * @param longitude the longitude to set
-	 */
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
-
-	/**
-	 * @return the latitude
-	 */
-	public String getLatitude() {
-		return latitude;
-	}
-
-	/**
-	 * @param latitude the latitude to set
-	 */
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
 }
