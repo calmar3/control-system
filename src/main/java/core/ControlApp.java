@@ -62,7 +62,7 @@ public class ControlApp {
 		Configuration config = new Configuration();
 		final StreamExecutionEnvironment env = EnvConfigurator.setupExecutionEnvironment();
 		
-		/*List<Lamp> data = new ArrayList<>();
+		List<Lamp> data = new ArrayList<>();
 		List<LightSensor> data2 = new ArrayList<>();
 
 		for(long i=1; i<=5; i++){
@@ -79,9 +79,9 @@ public class ControlApp {
 			
 		}
 		DataStream<Lamp> lampStream = env.fromCollection(data).assignTimestampsAndWatermarks(new LampTSExtractor());
-		DataStream<LightSensor> sensorStream = env.fromCollection(data2).assignTimestampsAndWatermarks(new LightSensorTSExtractor());*/
+		DataStream<LightSensor> sensorStream = env.fromCollection(data2).assignTimestampsAndWatermarks(new LightSensorTSExtractor());
 
-	    ThreadCallTraffic tl = new ThreadCallTraffic();
+	  /*  ThreadCallTraffic tl = new ThreadCallTraffic();
 		tl.start();
 		
 		// set up the streaming execution environment
@@ -96,7 +96,7 @@ public class ControlApp {
 		FlinkKafkaConsumerBase<LightSensor> kafkaConsumerLS = kafkaConsumerSensor.assignTimestampsAndWatermarks(new LightSensorTSExtractor());
 
 		DataStream<Lamp> lampStream = env.addSource(kafkaConsumerTS);
-		DataStream<LightSensor> sensorStream = env.addSource(kafkaConsumerLS);
+		DataStream<LightSensor> sensorStream = env.addSource(kafkaConsumerLS);*/
 
 		DataStream<Lamp> filteredLampById = lampStream.filter(new LampFilter());
 		DataStream<LightSensor> filteredSensorById = sensorStream.filter(new LightSensorFilter());
@@ -116,7 +116,8 @@ public class ControlApp {
 				
 		// publish result on Kafka topic
 		
-		KafkaConfigurator.getProducerAdjustmentIntensity(filterAdjustmentStream);
+		filterAdjustmentStream.writeAsText("ciao");
+		//KafkaConfigurator.getProducerAdjustmentIntensity(filterAdjustmentStream);
 		env.execute("Control System");
 	}
 }

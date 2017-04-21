@@ -1,4 +1,6 @@
 package operator.join;
+import java.math.BigDecimal;
+
 import org.apache.flink.api.common.functions.JoinFunction;
 
 import configuration.Configuration;
@@ -26,11 +28,17 @@ public class ComputeIntensity implements JoinFunction<Lamp, LightSensor, LightAd
 			return la;
 		}
 		else if(trafficPercentual<config.MIN_PERCENTAGE_LIGHT_DOUBLE){
-			la.setLightIntensityAdjustment((Math.abs(config.MIN_PERCENTAGE_LIGHT_DOUBLE-lightSensor.getLightIntensity()))-lamp.getLightIntensity());
+			BigDecimal bg = new BigDecimal((Math.abs(config.MIN_PERCENTAGE_LIGHT_DOUBLE-lightSensor.getLightIntensity()))-lamp.getLightIntensity()); 
+			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			double intensity= bg.doubleValue();
+			la.setLightIntensityAdjustment(intensity);
 			return la;
 		}
 		else if(lamp.getLightIntensity()!=trafficPercentual-lightSensor.getLightIntensity()){
-			la.setLightIntensityAdjustment(Math.abs(trafficPercentual-lightSensor.getLightIntensity())-lamp.getLightIntensity());
+			BigDecimal bg = new BigDecimal(Math.abs(trafficPercentual-lightSensor.getLightIntensity())-lamp.getLightIntensity()); 
+			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			double intensity= bg.doubleValue();
+			la.setLightIntensityAdjustment(intensity);
 			return la;
 		}
 		return la;
