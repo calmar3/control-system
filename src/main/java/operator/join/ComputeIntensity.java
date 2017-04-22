@@ -18,7 +18,7 @@ public class ComputeIntensity implements JoinFunction<Lamp, LightSensor, LightAd
 		Configuration config= new Configuration();
 				
 		LightAdjustment la = new LightAdjustment();
-		la.setLightIntensityAdjustment(lamp.getLightIntensity());
+		la.setLightIntensityAdjustment(0.0);
 		la.setLampId(lamp.getLampId());
 		
 		double trafficPercentual= HashMapStreetTraffic.getInstance().get(lamp.getAddress()); 

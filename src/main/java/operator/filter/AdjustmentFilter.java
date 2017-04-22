@@ -20,7 +20,7 @@ public class AdjustmentFilter implements FilterFunction<LightAdjustment> {
 			LA.put(lightAdjustment.getLampId(),lightAdjustment.getLightIntensityAdjustment());
 			 return true;
 		}
-		else if(adjustment == lightAdjustment.getLightIntensityAdjustment())
+		else if(Double.compare(adjustment,lightAdjustment.getLightIntensityAdjustment())==0)
 	            return false;
 	   else{
 		   	LA.replace(lightAdjustment.getLampId(), lightAdjustment.getLightIntensityAdjustment());
