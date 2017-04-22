@@ -81,7 +81,7 @@ public class ControlApp {
 		DataStream<Lamp> lampStream = env.fromCollection(data).assignTimestampsAndWatermarks(new LampTSExtractor());
 		DataStream<LightSensor> sensorStream = env.fromCollection(data2).assignTimestampsAndWatermarks(new LightSensorTSExtractor());*/
 
-	   ThreadCallTraffic tl = new ThreadCallTraffic();
+	    ThreadCallTraffic tl = new ThreadCallTraffic();
 		tl.start();
 		
 		// set up the streaming execution environment
@@ -113,7 +113,7 @@ public class ControlApp {
 				.apply(new ComputeIntensity());
 		
 		DataStream<LightAdjustment> filterAdjustmentStream = lightAdjustmentStream.keyBy(new LightAdjustmentKey()).filter(new AdjustmentFilter()).setParallelism(config.FILTER_PARALLELISM);
-				
+		
 		// publish result on Kafka topic
 		
 		KafkaConfigurator.getProducerAdjustmentIntensity(filterAdjustmentStream);

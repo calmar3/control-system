@@ -22,19 +22,19 @@ public class ComputeIntensity implements JoinFunction<Lamp, LightSensor, LightAd
 		la.setLampId(lamp.getLampId());
 		
 		double trafficPercentual= HashMapStreetTraffic.getInstance().get(lamp.getAddress()); 
-		
-		if(lightSensor.getLightIntensity()>=0.5){
+			
+		if(Double.compare(lightSensor.getLightIntensity(),0.5)>0 || Double.compare(lightSensor.getLightIntensity(),0.5)==0){
 			la.setLightIntensityAdjustment((lamp.getLightIntensity())*(-1));
 			return la;
-		}
-		else if(trafficPercentual<config.MIN_PERCENTAGE_LIGHT_DOUBLE){
+		} 
+		else if(Double.compare(trafficPercentual,config.MIN_PERCENTAGE_LIGHT_DOUBLE)<0){
 			BigDecimal bg = new BigDecimal((Math.abs(config.MIN_PERCENTAGE_LIGHT_DOUBLE-lightSensor.getLightIntensity()))-lamp.getLightIntensity()); 
 			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
 			double intensity= bg.doubleValue();
 			la.setLightIntensityAdjustment(intensity);
 			return la;
 		}
-		else if(lamp.getLightIntensity()!=trafficPercentual-lightSensor.getLightIntensity()){
+		else if(Double.compare(lamp.getLightIntensity(),trafficPercentual-lightSensor.getLightIntensity())!=0){
 			BigDecimal bg = new BigDecimal(Math.abs(trafficPercentual-lightSensor.getLightIntensity())-lamp.getLightIntensity()); 
 			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
 			double intensity= bg.doubleValue();
