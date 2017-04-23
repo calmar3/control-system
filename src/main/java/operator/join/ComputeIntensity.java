@@ -22,20 +22,27 @@ public class ComputeIntensity implements JoinFunction<Lamp, LightSensor, LightAd
 		la.setLampId(lamp.getLampId());
 		
 		double trafficPercentual= HashMapStreetTraffic.getInstance().get(lamp.getAddress()); 
-			
-		if(Double.compare(lightSensor.getLightIntensity(),0.5)>0 || Double.compare(lightSensor.getLightIntensity(),0.5)==0){
-			la.setLightIntensityAdjustment((lamp.getLightIntensity())*(-1));
+		
+		BigDecimal bg = new BigDecimal(lightSensor.getLightIntensity()); 
+		bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+		double lightIntensity= bg.doubleValue();
+		
+		if(Double.compare(lightIntensity,0.5)>0 || Double.compare(lightIntensity,0.5)==0){
+			bg = new BigDecimal((lamp.getLightIntensity())*(-1)); 
+			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			double Intensity= bg.doubleValue();
+			la.setLightIntensityAdjustment(Intensity);
 			return la;
 		} 
 		else if(Double.compare(trafficPercentual,config.MIN_PERCENTAGE_LIGHT_DOUBLE)<0){
-			BigDecimal bg = new BigDecimal((Math.abs(config.MIN_PERCENTAGE_LIGHT_DOUBLE-lightSensor.getLightIntensity()))-lamp.getLightIntensity()); 
+			bg = new BigDecimal((Math.abs(config.MIN_PERCENTAGE_LIGHT_DOUBLE-lightSensor.getLightIntensity()))-lamp.getLightIntensity()); 
 			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
 			double intensity= bg.doubleValue();
 			la.setLightIntensityAdjustment(intensity);
 			return la;
 		}
 		else if(Double.compare(lamp.getLightIntensity(),trafficPercentual-lightSensor.getLightIntensity())!=0){
-			BigDecimal bg = new BigDecimal(Math.abs(trafficPercentual-lightSensor.getLightIntensity())-lamp.getLightIntensity()); 
+			bg = new BigDecimal(Math.abs(trafficPercentual-lightSensor.getLightIntensity())-lamp.getLightIntensity()); 
 			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
 			double intensity= bg.doubleValue();
 			la.setLightIntensityAdjustment(intensity);
