@@ -1,10 +1,8 @@
 package model;
 
-import java.io.Serializable;
 
-public class LightSensor implements Serializable {
+public class LightSensor implements Cloneable{
 
-	private static final long serialVersionUID = 1L;
 	private long lightSensorId;
     private double lightIntensity;
     private long timestamp;
@@ -57,6 +55,11 @@ public class LightSensor implements Serializable {
 		this.address = address;
 	}
 	
+	@Override
+	public LightSensor clone() throws CloneNotSupportedException {
+	      return (LightSensor) super.clone();
+	}
+	   
 	 public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("-----");

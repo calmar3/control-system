@@ -6,10 +6,10 @@ import java.util.Properties;
 
 public class Configuration {
 
-	public long TIME_WINDOW_SENSOR_LIGHT_SEC;
 	public long JOIN_TIME_SEC;
 	public long MEDIAN_WINDOW_SLIDE;
 	public long MEDIAN_WINDOW_SIZE;
+	public long SLEEP_TIME_TRAFFIC_MLS;
 
 	public long WATERMARK_INTERVAL_SEC;
 
@@ -38,8 +38,8 @@ public class Configuration {
             
             prop.load(inputStream);
                      			  		
-			TIME_WINDOW_SENSOR_LIGHT_SEC=Long.parseLong(prop.getProperty("TIME_WINDOW_SENSOR_LIGHT_SEC"));
 			JOIN_TIME_SEC=Long.parseLong(prop.getProperty("JOIN_TIME_SEC"));
+			SLEEP_TIME_TRAFFIC_MLS=Long.parseLong(prop.getProperty("SLEEP_TIME_TRAFFIC_MLS"));
 			MEDIAN_WINDOW_SLIDE=Long.parseLong(prop.getProperty("MEDIAN_WINDOW_SLIDE"));
 			MEDIAN_WINDOW_SIZE=Long.parseLong(prop.getProperty("MEDIAN_WINDOW_SIZE"));
 		    WATERMARK_INTERVAL_SEC=Long.parseLong(prop.getProperty("WATERMARK_INTERVAL_SEC"));

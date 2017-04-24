@@ -31,10 +31,10 @@ import operator.key.LightAdjustmentKey;
 import operator.key.LightSensorKey;
 import operator.time.LampTSExtractor;
 import operator.time.LightSensorTSExtractor;
-import operator.window.LightSensorWindowFunction;
-import operator.window.MedianConsLampFF;
+import operator.window.MedianSensorFF;
+import operator.window.MedianLampFF;
 import operator.window.MedianLampWF;
-import operator.window.SumIntensityFoldFunction;
+import operator.window.MedianSensorWF;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,15 +102,15 @@ public class ControlApp {
 		DataStream<Lamp> filteredLampById = lampStream.filter(new LampFilter());
 		DataStream<LightSensor> filteredSensorById = sensorStream.filter(new LightSensorFilter());
 	
-        // compute avg light sensor
-		WindowedStream groupSensorById = filteredSensorById.keyBy(new LightSensorKey()).timeWindow(Time.seconds(config.TIME_WINDOW_SENSOR_LIGHT_SEC));
-		DataStream<LightSensor> AvgSensorLight = groupSensorById.fold(new Tuple2<>(null, (long) 0), new SumIntensityFoldFunction(), new LightSensorWindowFunction()).setParallelism(config.FOLD_PARALLELISM);
+		WindowedStream sensorWindowedStream  = filteredSensorById.keyBy(new LightSensorKey()).timeWindow(Time.seconds(config.MEDIAN_WINDOW_SIZE));
+		DataStream<LightSensor> sensorMedianLight = sensorWindowedStream.fold(new Tuple2<>(null, null), new MedianSensorFF(), new MedianSensorWF()).setParallelism(config.FOLD_PARALLELISM);
 		
-		WindowedStream LampWindowedStream = filteredLampById.keyBy(new LampKey()).timeWindow(Time.seconds(config.MEDIAN_WINDOW_SIZE));
-		SingleOutputStreamOperator lampMedianStream = LampWindowedStream.fold(new Tuple2<>(null, null), new MedianConsLampFF(), new MedianLampWF()).setParallelism(config.FOLD_PARALLELISM);
+		
+		WindowedStream lampWindowedStream = filteredLampById.keyBy(new LampKey()).timeWindow(Time.seconds(config.MEDIAN_WINDOW_SIZE));
+		SingleOutputStreamOperator lampMedianStream = lampWindowedStream.fold(new Tuple2<>(null, null), new MedianLampFF(), new MedianLampWF()).setParallelism(config.FOLD_PARALLELISM);
 
 		// compute adjustment
-		DataStream<LightAdjustment> lightAdjustmentStream= lampMedianStream.join(AvgSensorLight).where(new LampKey()).equalTo(new LightSensorKey()).window(TumblingEventTimeWindows.of(Time.seconds(config.JOIN_TIME_SEC)))
+		DataStream<LightAdjustment> lightAdjustmentStream= lampMedianStream.join(sensorMedianLight).where(new LampKey()).equalTo(new LightSensorKey()).window(TumblingEventTimeWindows.of(Time.seconds(config.JOIN_TIME_SEC)))
 				.apply(new ComputeIntensity());
 		
 		DataStream<LightAdjustment> filterAdjustmentStream = lightAdjustmentStream.keyBy(new LightAdjustmentKey()).filter(new AdjustmentFilter()).setParallelism(config.FILTER_PARALLELISM);

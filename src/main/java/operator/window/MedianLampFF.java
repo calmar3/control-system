@@ -4,15 +4,14 @@ import model.Lamp;
 import org.apache.flink.api.common.functions.FoldFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 
-import model.Lamp;
 import model.TDigestMedian;
-import org.apache.flink.api.common.functions.FoldFunction;
-import org.apache.flink.api.java.tuple.Tuple2;
 
 
-public class MedianConsLampFF implements FoldFunction<Lamp, Tuple2<TDigestMedian, Lamp>> {
+public class MedianLampFF implements FoldFunction<Lamp, Tuple2<TDigestMedian, Lamp>> {
 
-    @Override
+	private static final long serialVersionUID = 1L;
+
+	@Override
     public Tuple2<TDigestMedian, Lamp> fold(Tuple2<TDigestMedian, Lamp> accumulator, Lamp l) throws Exception {
         if(accumulator.f0 != null) {
             TDigestMedian median = new TDigestMedian();

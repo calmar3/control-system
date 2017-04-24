@@ -17,8 +17,6 @@ import model.HashMapStreetTraffic;
 public class ThreadCallTraffic extends Thread {
 	
 	private boolean stop = false;
-	private int sleepTime = 30000;
-
 		
 	public boolean isStop() {
 		return stop;
@@ -52,7 +50,7 @@ public class ThreadCallTraffic extends Thread {
 			}
 		}
 		try {	
-			Thread.sleep(sleepTime);
+			Thread.sleep(config.SLEEP_TIME_TRAFFIC_MLS);
 		}
 		catch(InterruptedException e) {
 			Thread.currentThread().interrupt();
