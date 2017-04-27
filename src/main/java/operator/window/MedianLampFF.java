@@ -6,7 +6,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 
 import model.TDigestMedian;
 
-
 public class MedianLampFF implements FoldFunction<Lamp, Tuple2<TDigestMedian, Lamp>> {
 
 	private static final long serialVersionUID = 1L;

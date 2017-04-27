@@ -1,5 +1,8 @@
 package model;
 
+/**
+ * Created by olga.
+ */
 
 public class LightSensor implements Cloneable{
 
@@ -65,6 +68,7 @@ public class LightSensor implements Cloneable{
         sb.append("-----");
         sb.append(this.lightSensorId).append(", ");
         sb.append(this.lightIntensity).append(", ");
+        sb.append(this.timestamp).append(", ");
         sb.append(this.address);
         sb.append("-----");
         

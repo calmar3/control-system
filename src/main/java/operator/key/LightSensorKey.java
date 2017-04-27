@@ -1,10 +1,8 @@
 package operator.key;
 
-
 import org.apache.flink.api.java.functions.KeySelector;
 
 import model.LightSensor;
-
 
 public class LightSensorKey implements KeySelector<LightSensor, Long> {
 

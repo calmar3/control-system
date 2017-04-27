@@ -2,6 +2,10 @@ package model;
 
 import java.io.Serializable;
 
+/**
+ * Created by olga.
+ */
+
 public class TrafficStreet implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -22,7 +26,6 @@ public class TrafficStreet implements Serializable {
 	public void setTrafficIntensity(double trafficIntensity) {
 		this.trafficIntensity = trafficIntensity;
 	}
-
 	
 	public String getPosition() {
 		return position;

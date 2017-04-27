@@ -1,7 +1,5 @@
 package model;
 
-
-
 import com.tdunning.math.stats.ArrayDigest;
 import com.tdunning.math.stats.TDigest;
 

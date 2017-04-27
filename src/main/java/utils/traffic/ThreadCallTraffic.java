@@ -1,6 +1,5 @@
 package utils.traffic;
 
-
 import java.net.URLEncoder;
 import java.util.Map;
 
@@ -13,6 +12,10 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import configuration.Configuration;
 import model.HashMapStreetTraffic;
+
+/**
+ * Created by olga.
+ */
 
 public class ThreadCallTraffic extends Thread {
 	
@@ -38,7 +41,6 @@ public class ThreadCallTraffic extends Thread {
 					HttpResponse<String> response = Unirest.get(url)
 							  .header("content-type", "application/json")
 							  .asString();
-					//System.out.println(response.getBody());
 					JSONObject resp = new JSONObject(response.getBody());
 					String street = (String) resp.get("street");
 					Double traffic = resp.getDouble("traffic");

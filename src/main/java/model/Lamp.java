@@ -200,15 +200,5 @@ public class Lamp implements Cloneable{
         }
 
     }
-/*
-    public static void main(String[] args) throws CloneNotSupportedException {
-        Lamp origin = new Lamp(1, 10 ,"a", System.currentTimeMillis(), System.currentTimeMillis() + 1000 );
-        Lamp clone = origin.clone();
-        clone.setConsumption(100000);
-        clone.setAddress("Change");
-        System.out.println(Lamp.toJson(origin));
-        System.out.println(Lamp.toJson(clone));
-    }
-*/
 
 }

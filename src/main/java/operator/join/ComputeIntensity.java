@@ -9,6 +9,10 @@ import model.Lamp;
 import model.LightAdjustment;
 import model.LightSensor;
 
+/**
+ * Created by olga.
+ */
+
 public class ComputeIntensity implements JoinFunction<Lamp, LightSensor, LightAdjustment>{
 
 	private static final long serialVersionUID = 1L;

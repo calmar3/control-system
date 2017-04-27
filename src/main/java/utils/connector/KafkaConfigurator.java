@@ -23,14 +23,13 @@ import java.util.Properties;
  */
 public class KafkaConfigurator {
 
-	
 
     public static final FlinkKafkaConsumer010<Lamp> getConsumer() throws IOException, ParseException {
     	Configuration config = new Configuration();
         // configure the Kafka consumer
         Properties kafkaProps = new Properties();
-        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST);
-        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER);
+        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST_L);
+        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER_L);
  
         // create a Kafka consumer
         FlinkKafkaConsumer010<Lamp> consumer = new FlinkKafkaConsumer010<>(
@@ -46,8 +45,8 @@ public class KafkaConfigurator {
     	
         // configure the Kafka consumer
         Properties kafkaProps = new Properties();
-        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST);
-        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER);
+        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST_S);
+        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER_S);
 
         // create a Kafka consumer
         FlinkKafkaConsumer010<LightSensor> consumer = new FlinkKafkaConsumer010<>(
@@ -62,10 +61,10 @@ public class KafkaConfigurator {
      
     public static final void getProducerAdjustmentIntensity(DataStream<LightAdjustment> lightAdjustmentStream) throws IOException, ParseException {
     	Configuration config = new Configuration();
-    	
-        //write data to a Kafka sink
+
+    	//write data to a Kafka sink
     	lightAdjustmentStream.addSink(new FlinkKafkaProducer010<>(
-                config.LOCAL_KAFKA_BROKER,
+                config.LOCAL_KAFKA_BROKER_LC,
                 config.CONTROL_TOPIC,
                 new LightAdjustmentSchema()
         ));

@@ -5,6 +5,9 @@ import model.LightAdjustment;
 
 import org.apache.flink.api.common.functions.FilterFunction;
 
+/**
+ * Created by olga.
+ */
 
 public class AdjustmentFilter implements FilterFunction<LightAdjustment> {
 		

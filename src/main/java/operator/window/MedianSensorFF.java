@@ -8,7 +8,6 @@ import org.apache.flink.api.java.tuple.Tuple2;
 
 import model.TDigestMedian;
 
-
 public class MedianSensorFF implements FoldFunction<LightSensor, Tuple2<TDigestMedian, LightSensor>> {
 
 	private static final long serialVersionUID = 1L;

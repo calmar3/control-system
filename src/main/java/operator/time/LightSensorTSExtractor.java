@@ -5,7 +5,6 @@ import model.LightSensor;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
-
 public class LightSensorTSExtractor extends BoundedOutOfOrdernessTimestampExtractor<LightSensor> {
 
 	private static final long serialVersionUID = 1L;

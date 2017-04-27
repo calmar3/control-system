@@ -4,7 +4,6 @@ import model.Lamp;
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;
 import org.apache.flink.streaming.api.windowing.time.Time;
 
-
 public class LampTSExtractor extends BoundedOutOfOrdernessTimestampExtractor<Lamp> {
 
 	private static final long serialVersionUID = 1L;

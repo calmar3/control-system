@@ -4,6 +4,10 @@ import model.LightSensor;
 
 import org.apache.flink.api.common.functions.FilterFunction;
 
+/**
+ * Created by olga.
+ */
+
 public final class LightSensorFilter implements FilterFunction<LightSensor> {
 
     private static final long serialVersionUID = 1L;

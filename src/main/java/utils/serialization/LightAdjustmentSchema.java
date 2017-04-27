@@ -1,12 +1,9 @@
 package utils.serialization;
 
-
 import model.LightAdjustment;
 import org.apache.flink.streaming.util.serialization.SerializationSchema;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 public class LightAdjustmentSchema implements SerializationSchema<LightAdjustment> {
 
