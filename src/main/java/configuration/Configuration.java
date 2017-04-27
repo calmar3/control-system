@@ -17,11 +17,11 @@ public class Configuration {
 		
 	public Double MIN_PERCENTAGE_LIGHT_DOUBLE;
 	
-	public String LOCAL_ZOOKEEPER_HOST;
+	public String ZOOKEEPER_HOST;
 
-	public String LOCAL_KAFKA_BROKER_LOCAL_CONTROLLER;
-	public String LOCAL_KAFKA_BROKER_SENSOR_LIGHT;
-	public String LOCAL_KAFKA_BROKER_LAMP;
+	public String KAFKA_BROKER_LOCAL_CONTROLLER;
+	public String KAFKA_BROKER_SENSOR_LIGHT;
+	public String KAFKA_BROKER_LAMP;
 
 	
 	
@@ -31,7 +31,7 @@ public class Configuration {
 	
 	public String TRAFFIC_HOST;
 	
-    public static final String FILENAME = "C:/Users/morga/Desktop/configuration/config.properties";
+    public static final String FILENAME = "/home/ec2-user/config.properties";
 
 	
 	public Configuration(){
@@ -48,10 +48,10 @@ public class Configuration {
 		    FOLD_PARALLELISM=Integer.parseInt(prop.getProperty("FOLD_PARALLELISM"));
 		    FILTER_PARALLELISM=Integer.parseInt(prop.getProperty("FILTER_PARALLELISM"));
 	       	MIN_PERCENTAGE_LIGHT_DOUBLE=Double.parseDouble(prop.getProperty("MIN_PERCENTAGE_LIGHT_DOUBLE"));
-	       	LOCAL_ZOOKEEPER_HOST=prop.getProperty("LOCAL_ZOOKEEPER_HOST");
-	       	LOCAL_KAFKA_BROKER_LAMP=prop.getProperty("LOCAL_KAFKA_BROKER_LAMP");
-	       	LOCAL_KAFKA_BROKER_LOCAL_CONTROLLER=prop.getProperty("LOCAL_KAFKA_BROKER_LOCAL_CONTROLLER");
-	       	LOCAL_KAFKA_BROKER_SENSOR_LIGHT=prop.getProperty("LOCAL_KAFKA_BROKER_SENSOR_LIGHT");
+	       	ZOOKEEPER_HOST=prop.getProperty("ZOOKEEPER_HOST");
+	       	KAFKA_BROKER_LAMP=prop.getProperty("KAFKA_BROKER_LAMP");
+	       	KAFKA_BROKER_LOCAL_CONTROLLER=prop.getProperty("KAFKA_BROKER_LOCAL_CONTROLLER");
+	       	KAFKA_BROKER_SENSOR_LIGHT=prop.getProperty("KAFKA_BROKER_SENSOR_LIGHT");
 			LAMP_TOPIC=prop.getProperty("LAMP_TOPIC");
 	       	SENSOR_TOPIC=prop.getProperty("SENSOR_TOPIC");
 			CONTROL_TOPIC=prop.getProperty("CONTROL_TOPIC");
