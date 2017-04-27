@@ -38,6 +38,20 @@ public class ComputeIntensity implements JoinFunction<Lamp, LightSensor, LightAd
 			la.setLightIntensityAdjustment(Intensity);
 			return la;
 		} 
+		else if(Double.compare(trafficPercentual,config.MIN_PERCENTAGE_LIGHT_DOUBLE)<0 && Double.compare(config.MIN_PERCENTAGE_LIGHT_DOUBLE,lightSensor.getLightIntensity())>0){
+			bg = new BigDecimal((Math.abs(config.MIN_PERCENTAGE_LIGHT_DOUBLE-lightSensor.getLightIntensity()))-lamp.getLightIntensity()); 
+			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			double intensity= bg.doubleValue();
+			la.setLightIntensityAdjustment(intensity);
+			return la;
+		}
+		else if(Double.compare(lamp.getLightIntensity(),trafficPercentual-lightSensor.getLightIntensity())!=0 && Double.compare(trafficPercentual,lightSensor.getLightIntensity())>0){
+			bg = new BigDecimal(Math.abs(trafficPercentual-lightSensor.getLightIntensity())-lamp.getLightIntensity()); 
+			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			double intensity= bg.doubleValue();
+			la.setLightIntensityAdjustment(intensity);
+			return la;
+		}
 		else if(Double.compare(config.MIN_PERCENTAGE_LIGHT_DOUBLE,lightSensor.getLightIntensity())>0 || Double.compare(trafficPercentual,lightSensor.getLightIntensity())>0){
 			bg = new BigDecimal((lamp.getLightIntensity())*(-1)); 
 			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -45,20 +59,6 @@ public class ComputeIntensity implements JoinFunction<Lamp, LightSensor, LightAd
 			la.setLightIntensityAdjustment(Intensity);
 			return la;
 		} 
-		else if(Double.compare(trafficPercentual,config.MIN_PERCENTAGE_LIGHT_DOUBLE)<0){
-			bg = new BigDecimal((Math.abs(config.MIN_PERCENTAGE_LIGHT_DOUBLE-lightSensor.getLightIntensity()))-lamp.getLightIntensity()); 
-			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
-			double intensity= bg.doubleValue();
-			la.setLightIntensityAdjustment(intensity);
-			return la;
-		}
-		else if(Double.compare(lamp.getLightIntensity(),trafficPercentual-lightSensor.getLightIntensity())!=0){
-			bg = new BigDecimal(Math.abs(trafficPercentual-lightSensor.getLightIntensity())-lamp.getLightIntensity()); 
-			bg = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
-			double intensity= bg.doubleValue();
-			la.setLightIntensityAdjustment(intensity);
-			return la;
-		}
 		return la;
 	}
 }
