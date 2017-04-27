@@ -28,8 +28,8 @@ public class KafkaConfigurator {
     	Configuration config = new Configuration();
         // configure the Kafka consumer
         Properties kafkaProps = new Properties();
-        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST_L);
-        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER_L);
+        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST);
+        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER_LAMP);
  
         // create a Kafka consumer
         FlinkKafkaConsumer010<Lamp> consumer = new FlinkKafkaConsumer010<>(
@@ -45,8 +45,8 @@ public class KafkaConfigurator {
     	
         // configure the Kafka consumer
         Properties kafkaProps = new Properties();
-        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST_S);
-        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER_S);
+        kafkaProps.setProperty("zookeeper.connect", config.LOCAL_ZOOKEEPER_HOST);
+        kafkaProps.setProperty("bootstrap.servers", config.LOCAL_KAFKA_BROKER_SENSOR_LIGHT);
 
         // create a Kafka consumer
         FlinkKafkaConsumer010<LightSensor> consumer = new FlinkKafkaConsumer010<>(
@@ -64,7 +64,7 @@ public class KafkaConfigurator {
 
     	//write data to a Kafka sink
     	lightAdjustmentStream.addSink(new FlinkKafkaProducer010<>(
-                config.LOCAL_KAFKA_BROKER_LC,
+                config.LOCAL_KAFKA_BROKER_LOCAL_CONTROLLER,
                 config.CONTROL_TOPIC,
                 new LightAdjustmentSchema()
         ));
