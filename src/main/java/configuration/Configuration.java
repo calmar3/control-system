@@ -56,7 +56,8 @@ public class Configuration {
 	       	SENSOR_TOPIC=prop.getProperty("SENSOR_TOPIC");
 			CONTROL_TOPIC=prop.getProperty("CONTROL_TOPIC");
 			TRAFFIC_HOST=prop.getProperty("TRAFFIC_HOST");
-	    
+			
+			inputStream.close();
 		} 
         catch (Exception e) {
             e.printStackTrace();
